@@ -15,10 +15,23 @@ class HomePageMapView extends StatefulWidget {
 }
 
 class _HomePageMapViewState extends State<HomePageMapView> {
+  MapController? controller;
+
+  @override
+  void initState() {
+    super.initState();
+// make sure to initialize before map loading
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size(5, 5)), 'assets/markers/man.png')
+        .then((d) {
+      controller!.customIcon = d;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final controller = Provider.of<MapController>(context, listen: false);
+    controller = Provider.of<MapController>(context, listen: false);
     return Scaffold(
       body: Container(
         width: size.width,
@@ -36,9 +49,13 @@ class _HomePageMapViewState extends State<HomePageMapView> {
                     myLocationButtonEnabled: true,
                     myLocationEnabled: true,
                     compassEnabled: true,
+                    markers: controller.getMarkers(),
                     initialCameraPosition: controller.myCurrentLocation,
                     onMapCreated: (GoogleMapController googleMapController) {
                       controller.gMapController.complete(googleMapController);
+                    },
+                    onTap: (points) {
+                      controller.handleTap(points, context);
                     },
                   ),
                 );
@@ -53,30 +70,34 @@ class _HomePageMapViewState extends State<HomePageMapView> {
                 title: AppStrings.appName,
               ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: SizedBox(
-        width: 150,
-        height: 40,
-        child: FloatingActionButton(
-          onPressed: () {
-            controller.getCurrentLocation();
-          },
-          child: SizedBox(
-            width: 200,
-            child: Row(
-              children: [
-                AppSpace.spaceW10,
-                Icon(
-                  Icons.location_pin,
-                ),
-                AppSpace.spaceW10,
-                Text("My Location"),
-              ],
+            Positioned(
+              bottom: 10,
+              left: 20,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      controller!.getCurrentLocation();
+                    },
+                    child: Icon(Icons.location_pin),
+                  ),
+                  AppSpace.spaceW10,
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Text("Send Alert".toUpperCase()),
+                        AppSpace.spaceW10,
+                        Icon(Icons.send)
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

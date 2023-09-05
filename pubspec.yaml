@@ -20,6 +20,7 @@ dependencies:
   google_maps_flutter: ^2.5.0
   location: ^5.0.3
   provider: ^6.0.5
+  http: ^1.1.0
   
 
 dev_dependencies:
@@ -33,9 +34,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/markers/
 
   # fonts:
   #   - family: Schyler
