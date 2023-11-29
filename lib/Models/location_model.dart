@@ -1,15 +1,15 @@
 class LocationDataModel {
   String? message;
-  List<Alllocations>? alllocations;
+  List<LocationModel>? alllocations;
 
   LocationDataModel({this.message, this.alllocations});
 
   LocationDataModel.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     if (json['alllocations'] != null) {
-      alllocations = <Alllocations>[];
+      alllocations = <LocationModel>[];
       json['alllocations'].forEach((v) {
-        alllocations!.add(new Alllocations.fromJson(v));
+        alllocations!.add(new LocationModel.fromJson(v));
       });
     }
   }
@@ -24,7 +24,7 @@ class LocationDataModel {
   }
 }
 
-class Alllocations {
+class LocationModel {
   int? id;
   String? title;
   String? latitude;
@@ -33,7 +33,7 @@ class Alllocations {
   String? tagColor;
   double? distance;
 
-  Alllocations(
+  LocationModel(
       {this.id,
       this.title,
       this.latitude,
@@ -42,7 +42,7 @@ class Alllocations {
       this.tagColor,
       this.distance});
 
-  Alllocations.fromJson(Map<String, dynamic> json) {
+  LocationModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     latitude = json['latitude'];

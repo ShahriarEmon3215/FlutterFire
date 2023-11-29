@@ -1,23 +1,24 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-
 import '../Models/location_model.dart';
+
+var mapProvider = ChangeNotifierProvider((ref) => MapController());
 
 class MapController extends ChangeNotifier {
   Completer<GoogleMapController> gMapController =
       Completer<GoogleMapController>();
-  Location location = new Location();
-  Set<Marker> markers = Set<Marker>();
-  List<Alllocations> locations = [
-    Alllocations(
+
+  Set<Marker> markers = <Marker>{};
+  List<LocationModel> locations = [
+    LocationModel(
       title: "slkdjlf",
       latitude: "23.75335188819229",
       longtude: "90.41668351739645",
     ),
-    Alllocations(
+    LocationModel(
       title: "eeee",
       latitude: "23.7528668",
       longtude: "90.4177",
@@ -30,49 +31,60 @@ class MapController extends ChangeNotifier {
   bool loadMap = false;
   bool mapFirstClicked = false;
 
-  CameraPosition myCurrentLocation = CameraPosition(
+  CameraPosition myCurrentLocation = const CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
 
-  CameraPosition kLake = CameraPosition(
+  CameraPosition kLake = const CameraPosition(
       bearing: 192.8334901395799,
       target: LatLng(37.43296265331129, -122.08832357078792),
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
 
-  void getCurrentLocation() async {
-    final GoogleMapController googleMapController = await gMapController.future;
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
+  // void getCurrentLocation() async {
+  //   final GoogleMapController googleMapController = await gMapController.future;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
+  //   LocationData _locationData;
+
+  //   _locationData = await location.getLocation();
+
+  //   googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+  //     CameraPosition(
+  //       bearing: 0,
+  //       target: LatLng(_locationData.latitude!, _locationData.longitude!),
+  //       zoom: 17.0,
+  //     ),
+  //   ));
+  //   notifyListeners();
+  // }
+  Position? currentPosition;
+  Future<void> getCurrentPosition() async {
+    try {
+      final GoogleMapController googleMapController =
+          await gMapController.future;
+
+      await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((Position position) async {
+        currentPosition = position;
+        print(
+            "---------------${currentPosition!.latitude} ${currentPosition!.longitude}");
+        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            bearing: 0,
+            target:
+                LatLng(currentPosition!.latitude, currentPosition!.longitude),
+            zoom: 17.0,
+          ),
+        ));
+        notifyListeners();
+      }).catchError((e) {
+        debugPrint(e);
+      });
+    } catch (exception) {
+      print("---------------$exception");
     }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    _locationData = await location.getLocation();
-
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
-        bearing: 0,
-        target: LatLng(_locationData.latitude!, _locationData.longitude!),
-        zoom: 17.0,
-      ),
-    ));
-    notifyListeners();
   }
 
   Set<Marker> getMarkers() {
@@ -121,30 +133,30 @@ class MapController extends ChangeNotifier {
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
-                      SizedBox(height: 30),
-                      Text(
+                      const SizedBox(height: 30),
+                      const Text(
                         "Ask for help!",
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       TextField(
                         decoration: InputDecoration(
                           hintText: "Type here...",
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 5),
+                            borderSide: const BorderSide(width: 5),
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Container(
+                      const SizedBox(height: 20),
+                      SizedBox(
                         width: 150,
                         child: ElevatedButton(
                             onPressed: (() {}),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("SEND ALERT"),

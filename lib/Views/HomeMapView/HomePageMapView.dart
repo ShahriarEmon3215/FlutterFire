@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fire/Controller/map_controller.dart';
 import 'package:flutter_fire/Utils/app_space.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
-
 import '../../Constants/app_strings.dart';
 import '../../Widgets/kAppBar.dart';
 
-class HomePageMapView extends StatefulWidget {
+class HomePageMapView extends ConsumerStatefulWidget {
   const HomePageMapView({super.key});
 
   @override
-  State<HomePageMapView> createState() => _HomePageMapViewState();
+  ConsumerState<HomePageMapView> createState() => _HomePageMapViewState();
 }
 
-class _HomePageMapViewState extends State<HomePageMapView> {
+class _HomePageMapViewState extends ConsumerState<HomePageMapView> {
   MapController? controller;
 
   @override
   void initState() {
     super.initState();
+    controller = ref.read(mapProvider);
 // make sure to initialize before map loading
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(5, 5)), 'assets/markers/man.png')
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)),
+            'assets/markers/man.png')
         .then((d) {
       controller!.customIcon = d;
     });
@@ -31,22 +31,24 @@ class _HomePageMapViewState extends State<HomePageMapView> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    controller = Provider.of<MapController>(context, listen: false);
+    //controller = ref.read(mapProvider);
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: size.width,
         height: size.height,
         child: Stack(
           children: [
-            Consumer<MapController>(
-              builder: (context, controller, child) {
-                return Container(
+            Consumer(
+              builder: (context, ref, child) {
+                var controller = ref.watch(mapProvider);
+                return SizedBox(
                   height: size.height,
                   width: size.width,
                   child: GoogleMap(
-                    mapType: MapType.hybrid,
+                    mapType: MapType.values[4],
                     trafficEnabled: true,
-                    myLocationButtonEnabled: true,
+                    mapToolbarEnabled: true,
+                    myLocationButtonEnabled: false,
                     myLocationEnabled: true,
                     compassEnabled: true,
                     markers: controller.getMarkers(),
@@ -77,23 +79,55 @@ class _HomePageMapViewState extends State<HomePageMapView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      controller!.getCurrentLocation();
-                    },
-                    child: Icon(Icons.location_pin),
+                  SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        controller!.getCurrentPosition();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          side: const BorderSide(
+                            width: 1,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      child: const Icon(Icons.location_pin),
+                    ),
                   ),
                   AppSpace.spaceW10,
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Text("Send Alert".toUpperCase()),
-                        AppSpace.spaceW10,
-                        Icon(Icons.send)
-                      ],
+                  SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                          side: const BorderSide(
+                            width: 1,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Send Alert".toUpperCase(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          AppSpace.spaceW10,
+                          const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                          )
+                        ],
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

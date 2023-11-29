@@ -12,25 +12,26 @@ class kAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 50,
       width: size.width,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 40,
+            height: 50,
             width: size.width * 0.9,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(30),
               color: Colors.white,
+              border: Border.all(width: 1, color: Colors.black),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 AppSpace.spaceW20,
                 Expanded(child: Text(title, style: Styles.h1)),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                   width: 30,
                   child: CircleAvatar(
@@ -38,7 +39,7 @@ class kAppBar extends StatelessWidget {
                   ),
                 ),
                 AppSpace.spaceW10,
-                Expanded(
+                const Expanded(
                   child: SizedBox(
                     width: 100,
                     height: 40,
