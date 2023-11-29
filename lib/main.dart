@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fire/Views/HomeMapView/HomePageMapView.dart';
+import 'package:flutter_fire/Views/HomeMapView/home_map_screen.dart';
 import 'package:flutter_fire/Views/SplashScreen/SplashScreen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

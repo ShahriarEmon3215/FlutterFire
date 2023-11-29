@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fire/Utils/context.dart';
-import 'package:flutter_fire/Views/HomeMapView/HomePageMapView.dart';
+import 'package:flutter_fire/Views/HomeMapView/home_map_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
